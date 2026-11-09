@@ -4,6 +4,14 @@ def calculate_TotalAmount(room_type,guest_count,checkin_date,checkout_date,compl
     check_in=datetime.strptime(checkin_date,"%d-%m-%Y")
     check_out=datetime.strptime(checkout_date,"%d-%m-%Y")
     nights=(check_out-check_in).days
+    today=datetime.today()
+    if nights<1 or nights>30:
+        raise ValueError("stay must be between 1 and 30 nights")
+    if check_in.date() < today.date():
+        raise ValueError("checkin date cannot be in past")
+    if (check_in-today).days>180:
+        raise ValueError("booking allowed within 180 days only")
+
     if room_type.lower()=="standard":
         room_rate=2500
     elif room_type.lower()=="deluxe":
@@ -28,7 +36,7 @@ def calculate_TotalAmount(room_type,guest_count,checkin_date,checkout_date,compl
             gst=18
         else:
             gst=12
-        gst_amount=perDay*(gst/100)
+        gst_amount=day_total*(gst/100)
 
         total_room_amount+=perDay
         total_extra_amount+=extra_charge

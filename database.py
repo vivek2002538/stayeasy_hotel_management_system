@@ -20,6 +20,7 @@ def create_tables(db_name):
     guest_count integer not null,
     status text not null,
     total_amount decimal not null,
+    gst decimal default 0,
     refund decimal default 0) """)
     con.commit()
     con.close()
@@ -28,14 +29,14 @@ def add_guest(db_name,guest):
     con=sqlite3.connect(db_name)
     cursor=con.cursor()
     cursor.execute(""" 
-    insert or replace into guests values(?,?,?)""",(guest.mobile,guest.name,guest.email))
+    insert or ignore  into guests values(?,?,?)""",(guest.get_mobile(),guest.get_name(),guest.get_email()))
     con.commit()
     con.close()
 
 def add_booking(db_name,booking):
     con=sqlite3.connect(db_name)
     cursor=con.cursor()
-    cursor.execute("""insert into bookings(room_no,room_type,guest_mobile,checkin_date,checkout_date,guest_count,status,total_amount,refund) values(?,?,?,?,?,?,?,?,?)""",
+    cursor.execute("""insert into bookings(room_no,room_type,guest_mobile,checkin_date,checkout_date,guest_count,status,total_amount,gst,refund) values(?,?,?,?,?,?,?,?,?,?)""",
                   (booking.room_no,
                    booking.room_type,
                    booking.guest_mobile,
@@ -44,7 +45,8 @@ def add_booking(db_name,booking):
                    booking.guest_count,
                    booking.status,
                    booking.total_amount,
-                   0) )
+                   booking.gst,
+                   0))
     con.commit()
     con.close()
 
